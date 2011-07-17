@@ -1,0 +1,8 @@
+Flask==0.7.2
+Jinja2==2.5.5
+Werkzeug==0.6.2
+distribute==0.6.15
+futures==2.1.2
+lxml==2.3
+python-memcached==1.47
+wsgiref==0.1.2
