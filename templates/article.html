@@ -1,0 +1,16 @@
+{% extends "page.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h1>{{ article.headline }}</h1>
+<h2>{{ article.subheadline }}</h2>
+<p>Author: {{ article.author }}</p>
+<p><i>Posted: {{ article.posted_dt }}</i></p>
+<img src="{{ article.img }}" />
+
+{{ article.body | safe }}
+
+<div data-role="mobile_ad">
+    <center><a href="#ad_splash"><img src="/static/mobile_ad.jpg" width=device_width</img></a></center>
+    <br>
+</div>
+{% endblock %}

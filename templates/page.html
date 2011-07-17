@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %} - Channel 4000</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.css"/>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.js"></script>
+</head>
+<body>
+<div data-role="page" id="home">
+    <div data-role="header">
+        <p style="text-align: center;"><img
+                src="http://channel4000.live.ib-prod.com/image/view/-/132196/highRes/1/-/mrtmkhz/-/site-logo-gif.gif"
+                alt="c4k : channel4000"/></p>
+        <div data-role="navbar">
+            <ul>
+                <li><a href="/collection/top_stories">Top Stories</a></li>
+                <li><a href="/collection/travel">Travel</a></li>
+                <li><a href="/collection/headlines">Headlines</a></li>
+                <li><a href="/collection/celebrities">Celebrities</a></li>
+                <li><a href="/collection/interviews">Interviews</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- /header -->
+
+    <div data-role="content">
+        {% block content %}{% endblock %}
+    </div>
+    <!-- /content -->
+
+    <div data-role="footer">
+        <p style="text-align: center;"><img
+                src="http://www.channel4000.com/image/view/-/1378/medRes/3/-/Site-Logo.gif" alt="channel4000"/></p>
+    </div>
+    <!-- /footer -->
+</div>
+<!-- /page -->
+
+
+</body>
+</html>

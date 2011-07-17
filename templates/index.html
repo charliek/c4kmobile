@@ -1,0 +1,23 @@
+{% extends "page.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h1>{{ story.headline }}</h1>
+<h2>{{ story.subheadline }}</h2>
+<img src="{{ story.img }}" />
+
+<div data-role="mobile_ad">
+    <center><a href="#ad_splash"><img src="/static/mobile_ad.jpg" width=device_width</img></a></center>
+    <br>
+</div>
+
+<ul data-role="listview" data-divider-theme="a">
+    <li data-role="list-divider">{{ collection.title }}</li>
+    {% for s in collection.articles %}
+    <li><a href="{{ url_for('display_article_html', server_path=s.path[1:]) }}">
+        <img src="{{ s.img }}"/>
+        <h3>{{ s.headline }}</h3>
+        <p>{{ s.subheadline }}</p>
+    </a></li>
+    {% endfor %}
+</ul>
+{% endblock %}
