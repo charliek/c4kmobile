@@ -17,7 +17,6 @@ def sync_url_get(url):
     key = cache_key(url)
     content = mc.get(key)
     if content is None:
-        print 'LOOKING UP URL : ' + url
         content = urllib2.urlopen(url, timeout=HTTP_TIMEOUT).read()
         mc.set(key, content, CACHE_EXPIRE)
     return content
