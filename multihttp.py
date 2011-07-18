@@ -17,6 +17,7 @@ def sync_url_get(url):
     key = cache_key(url)
     content = mc.get(key)
     if content is None:
+        print 'LOOKING UP URL : ' + url
         content = urllib2.urlopen(url, timeout=HTTP_TIMEOUT).read()
         mc.set(key, content, CACHE_EXPIRE)
     return content
@@ -28,14 +29,11 @@ def request_urls(urls):
         future_to_url = dict((executor.submit(sync_url_get, url), url) for url in urls)
         for future in concurrent.futures.as_completed(future_to_url):
             url = future_to_url[future]
-
-            def run():
-                if future.exception() is not None:
-                    raise future.exception()
-                else:
-                    return future.result()
-
-            looked_up[url] = run
+            try:
+                result = future.result(), None
+            except Exception, e:
+                result = None, e
+            looked_up[url] = result
     return looked_up
 
 if __name__ == '__main__':

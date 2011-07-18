@@ -24,7 +24,7 @@ def _load_all_urls(collections):
     to_load = set(needed)
     url_content = multihttp.request_urls(to_load)
     for c in collections:
-        c.content = url_content[c.url]()
+        c.content, ex = url_content[c.url]
 
 
 class Fetcher(object):
@@ -46,16 +46,33 @@ class Fetcher(object):
 
     def extract_link(self, a_elem, items):
         try:
-            path = a_elem.get('href')
-            teaser=  a_elem.text
-            article = lookup_article(host + path)
-            if article is not None:
-                article['teaser'] = teaser
-                article['path'] = path
-                items.append(article)
+            link = {
+                'path': a_elem.get('href'),
+                'teaser': a_elem.text
+            }
+            items.append(link)
         except Exception, e:
             print e
             pass
+
+    def populate_articles(self, items):
+        to_fetch = [host + x['path'] for x in items]
+        fetched = multihttp.request_urls(to_fetch)
+        articles = []
+        for item in items:
+            try:
+                content, ex = fetched[host + item['path']]
+                if ex is not None:
+                    raise ex
+                a = parse_article(content)
+                if a is not None:
+                    a['url'] = host + item['path']
+                    a['teaser'] = item['teaser']
+                    a['path'] = item['path']
+                    articles.append(a)
+            except Exception, e:
+                print e
+        return articles
 
 
 class TopStoryFetcher(Fetcher):
@@ -71,7 +88,7 @@ class TopStoryFetcher(Fetcher):
         links = []
         for elem in doc.cssselect("div#rotating131280navi li a"):
             self.extract_link(elem, links)
-        return links
+        return self.populate_articles(links)
 
 
 class ClassBasedFetcher(Fetcher):
@@ -91,7 +108,7 @@ class ClassBasedFetcher(Fetcher):
                     self.extract_link(s, links)
                 for s in elem.cssselect('li a.teasableLink'):
                     self.extract_link(s, links)
-        return links
+        return self.populate_articles(links)
 
 COLLECTIONS = [
     TopStoryFetcher(),
@@ -100,7 +117,7 @@ COLLECTIONS = [
     ClassBasedFetcher('Movie Reviews'),
     ClassBasedFetcher('Celebrities'),
     ClassBasedFetcher('Interviews'),
-]
+    ]
 
 def lookup_collections(id=None):
     if id is None:
@@ -111,28 +128,32 @@ def lookup_collections(id=None):
     collections = []
     for c in to_load:
         col = {
-            'id' : c.id,
-            'title' : c.title,
-            'articles' : c.get_items()
+            'id': c.id,
+            'title': c.title,
+            'articles': c.get_items()
         }
         collections.append(col)
     return collections
 
-def lookup_article(url):
+
+def parse_article(content):
     article = {}
-    doc = fromstring(multihttp.sync_url_get(url))
+    doc = fromstring(content)
     elems = doc.cssselect('body.content-article div.article')
     if len(elems) is 0:
         raise Exception("The url passed in does not appear to be an article")
     art_elem = elems[0]
-    article['url'] = url
     article['headline'] = _flatten(art_elem.cssselect('div.header h1')[0]).strip()
     try:
         article['subheadline'] = _flatten(art_elem.cssselect('div.header h2.subHeadline')[0]).strip()
     except Exception, e:
         article['subheadline'] = None
 
-    article['author'] = _flatten(art_elem.cssselect('div.header div.author')[0]).strip()[7:].strip()
+    try:
+        article['author'] = _flatten(art_elem.cssselect('div.header div.author')[0]).strip()[7:].strip()
+    except Exception, e:
+        article['author'] = None
+
     article['posted_dt'] = art_elem.cssselect('div.header span.posted_at')[0].text.strip()[10:]
 
     try:
@@ -152,6 +173,12 @@ def lookup_article(url):
     article['body'] = tostring(rt)
     return article
 
+
+def lookup_article(url):
+    content = multihttp.sync_url_get(url)
+    article = parse_article(content)
+    article['url'] = url
+    return article
 
 if __name__ == '__main__':
     #pass
