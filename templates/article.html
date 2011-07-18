@@ -5,7 +5,12 @@
 <h2>{{ article.subheadline }}</h2>
 <p>Author: {{ article.author }}</p>
 <p><i>Posted: {{ article.posted_dt }}</i></p>
-<img src="{{ article.img }}" />
+
+{{ article.url }}
+
+{% if article.img %}
+    <img src="{{ article.img }}" />
+{% endif %}
 
 {{ article.body | safe }}
 

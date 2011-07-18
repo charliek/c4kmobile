@@ -11,7 +11,9 @@
     <li data-role="list-divider">{{ collection.title }}</li>
     {% for s in collection.articles %}
     <li><a href="{{ url_for('display_article_html', server_path=s.path[1:]) }}">
-        <img src="{{ s.img }}"/>
+        {% if s.img %}
+            <img src="{{ s.img }}"/>
+        {% endif %}
         <h3>{{ s.headline }}</h3>
         <p>{{ s.subheadline }}</p>
     </a></li>
