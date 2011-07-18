@@ -7,13 +7,13 @@
 <p><i>Posted: {{ article.posted_dt }}</i></p>
 
 {% if article.img %}
-    <img src="{{ article.img }}"/>
+    <img src="{{ article.img }}" width="300" height="169" />
 {% endif %}
 
 {{ article.body | safe }}
 
 <div data-role="mobile_ad">
-    <center><a href="#ad_splash"><img src="/static/mobile_ad.jpg" width=device_width</img></a></center>
+    <center><img src="/static/mobile_ad.jpg" /></center>
     <br>
 </div>
 {% endblock %}
