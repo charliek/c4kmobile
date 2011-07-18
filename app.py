@@ -2,9 +2,6 @@ from scrape import host, lookup_article, lookup_collections
 from flask import Flask, render_template, jsonify, make_response, request, abort, redirect, url_for
 import json
 
-INDEX_CACHE_TIME = 300
-ARTICLE_CACHE_TIME = 300
-
 app = Flask(__name__)
 
 @app.route('/')
@@ -15,6 +12,7 @@ def index():
     #else:
     #    abort(500)
     return display_collection_html('top_stories')
+
 
 @app.route('/collection/<id>')
 def display_collection_html(id):
@@ -28,7 +26,7 @@ def display_collection_html(id):
 @app.route('/article/<path:server_path>')
 def display_article_html(server_path):
     path = host + '/' + server_path
-    article = lookup_article(path, cache_expire=ARTICLE_CACHE_TIME)
+    article = lookup_article(path)
     return render_template('article.html', article=article)
 
 
@@ -48,7 +46,7 @@ def display_collection_json(id=None):
 @app.route('/api/article/<path:server_path>')
 def display_article_json(server_path):
     path = host + '/' + server_path
-    article = lookup_article(path, cache_expire=ARTICLE_CACHE_TIME)
+    article = lookup_article(path)
     return jsonify(article)
 
 if __name__ == "__main__":

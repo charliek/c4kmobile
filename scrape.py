@@ -16,13 +16,13 @@ def _flatten(el):
     return "".join(result)
 
 
-def _load_all_urls(collections, http_timeout, cache_expire):
+def _load_all_urls(collections):
     """Pass in a list of Fetcher objects and this will load all the urls needed and populate the objects."""
     needed = []
     for c in collections:
         needed.append(c.url)
     to_load = set(needed)
-    url_content = multihttp.request_urls(to_load, http_timeout=http_timeout, cache_expire=cache_expire)
+    url_content = multihttp.request_urls(to_load)
     for c in collections:
         c.content = url_content[c.url]()
 
@@ -102,12 +102,12 @@ COLLECTIONS = [
     ClassBasedFetcher('Interviews'),
 ]
 
-def lookup_collections(id=None, http_timeout=60, cache_expire=0):
+def lookup_collections(id=None):
     if id is None:
         to_load = COLLECTIONS
     else:
         to_load = [c for c in COLLECTIONS if c.id == id]
-    _load_all_urls(to_load, http_timeout=http_timeout, cache_expire=cache_expire)
+    _load_all_urls(to_load)
     collections = []
     for c in to_load:
         col = {
@@ -118,9 +118,9 @@ def lookup_collections(id=None, http_timeout=60, cache_expire=0):
         collections.append(col)
     return collections
 
-def lookup_article(url, http_timeout=60, cache_expire=0):
+def lookup_article(url):
     article = {}
-    doc = fromstring(multihttp.sync_url_get(url, http_timeout=http_timeout, cache_expire=cache_expire))
+    doc = fromstring(multihttp.sync_url_get(url))
     elems = doc.cssselect('body.content-article div.article')
     if len(elems) is 0:
         raise Exception("The url passed in does not appear to be an article")
